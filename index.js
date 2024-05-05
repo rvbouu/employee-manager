@@ -1,8 +1,5 @@
-const pool = require('./lib/pool');
 const prompt = require('./lib/questions');
-const display = require('./lib/display');
 const colors = require('colors');
-const consTable = require('console.table');
 
 // Welcome image function that displays after connection is made
 afterConnect = () => {
