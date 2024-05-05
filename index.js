@@ -1,8 +1,7 @@
-const { Pool } = require('pg');
+const { pool } = require('./lib/pool');
 const inquirer = require('inquirer');
 const colors = require('colors');
 const prompt = require('./lib/questions');
-const consTable = require('console.table');
 
 
 const pool = new Pool(
@@ -370,43 +369,4 @@ afterConnect = () => {
 
 afterConnect();
 
-
-
-
-
-//   switch (mainMenu) {
-//     case 'View All Employees':
-//       showAllEmployees();
-//       break;
-//     case 'Add Employee':
-//       addNewEmployee();
-//       break;
-//     case 'Update Employee Role':
-//       updateEmpRole();
-//       break;
-//     case 'View All Roles':
-//       showAllRoles();
-//       break;
-//     case 'Add Role':
-//       addNewRole();
-//       break;
-//     case 'View All Departments':
-//       showAllDepts();
-//       break;
-//     case 'Add Department':
-//       addNewDept();
-//       break;
-//     case 'Quit':
-
-//       pool.end();
-//       break;
-//   }
-
-
-
-
-
-
-
-
-
+module.exports
