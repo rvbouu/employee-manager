@@ -62,8 +62,10 @@ const mainPrompt = () => inquirer.prompt([
   }
 })
 
+/* ---------- functions to display tables ---------- */
+// Displays all employees
 showAllEmployees = () => {
-  console.log('Showing all employees...\n');
+  console.log('\nShowing all employees...\n'.yellow);
   const sql = `SELECT employee.id,
   employee.first_name,
   employee.last_name,
@@ -82,8 +84,9 @@ showAllEmployees = () => {
   })
 }
 
+// Displays all roles
 showAllRoles = () => {
-  console.log('Showing all departments...\n');
+  console.log('\nShowing all roles...\n'.yellow);
   const sql = `SELECT roles.id,
   roles.title,
   department.name AS department,
@@ -97,8 +100,9 @@ showAllRoles = () => {
   })
 }
 
+// Displays all departments
 showAllDepts = () => {
-  console.log('Showing all departments...\n');
+  console.log('\nShowing all departments...\n'.yellow);
   const sql = `SELECT * FROM department`
   pool.query(sql, (err, results) => {
     if (err) throw err;
@@ -107,6 +111,8 @@ showAllDepts = () => {
   })
 }
 
+/* ---------- Functions to add items to tables ---------- */
+// Adds new employee
 addNewEmployee = () => {
   inquirer.prompt([
     {
@@ -157,7 +163,7 @@ addNewEmployee = () => {
         const managerSql = `SELECT * FROM employee`;
         pool.query(managerSql, (err, data) => {
           if (err) throw err;
-          console.log(data.rows)
+          // console.log(data.rows)
           const managers = data.rows.map(({ id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: id }));
           managers.push('None')
 
@@ -177,10 +183,10 @@ addNewEmployee = () => {
 
             const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
             VALUES ($1, $2, $3, $4)`;
-            console.log(params)
+            // console.log(params)
             pool.query(sql, params, (err, results) => {
               if (err) throw err;
-              console.log(`Added ${ans.firstName} ${ans.lastName} to the database.\n`);
+              console.log(`\nAdded ${ans.firstName} ${ans.lastName} to the database.\n`.green);
 
               mainPrompt();
             })
@@ -191,6 +197,97 @@ addNewEmployee = () => {
   })
 }
 
+// Adds new role
+addNewRole = () => {
+  inquirer.prompt([
+    {
+      type: 'input',
+      message: 'What is the name of the role?',
+      name: 'title',
+      validate: addRole => {
+        if(addRole){
+          return true;
+        }else{
+          console.log('Please enter a role: ');
+          return false;
+        }
+      }
+    },
+    {
+      type: 'input',
+      message: 'What is the salary of the role?',
+      name: 'salary',
+      validate: addSalary => {
+        if(!isNaN(addSalary)){
+          return true;
+        }else{
+          console.log('Please enter a salary for the role: ');
+          return false;
+        }
+      }
+    }
+  ]).then((ans) => {
+    const params = [ans.title, ans.salary];
+
+    const deptSql = `SELECT * FROM department`;
+    pool.query(deptSql, (err, data) => {
+      if (err) throw err;
+      const depts = data.rows.map(({id, name}) => ({name: name, value: id}));
+
+      inquirer.prompt([
+        {
+          type: 'list',
+          message: `Which department does the role belong to?`,
+          name: 'department',
+          choices: depts
+        }
+      ]).then(deptAns => {
+        const dept = deptAns.department;
+        params.push(dept);
+
+        const sql = `INSERT INTO roles (title, salary, department_id)
+        VALUES ($1, $2, $3)`;
+
+        pool.query(sql, params, (err, results) => {
+          if (err) throw err;
+          console.log(`\nAdded ${ans.title} to the database.\n`.green);
+          mainPrompt();
+        })
+      })
+    })
+  })
+}
+
+// Adds new department
+addNewDept = () => {
+  inquirer.prompt([
+    {
+      type: 'input',
+      message: 'What is the name of the department?',
+      name: 'department',
+      validate: addDept => {
+        if (addDept){
+          return true;
+        }else{
+          console.log('Please enter a department: ');
+          return false;
+        }
+      }
+    }
+  ]).then((ans) => {
+    const params = [ans.department];
+    const sql = `INSERT INTO department (name)
+    VALUES ($1)`;
+
+    pool.query(sql, params, (err, results) => {
+      if (err) throw err;
+      console.log(`\nAdded ${ans.department} to the database.\n`.green);
+      mainPrompt();
+    })
+  })
+}
+
+/* ---------- Updates items in tables ---------- */
 
 
 // Welcome image function that displays after connection is made
@@ -207,7 +304,8 @@ afterConnect = () => {
       console.log("|   ".yellow + "| |  | | (_| | | | | (_| | (_| |  __/ |           ".magenta + "|".yellow)
       console.log("|   ".yellow + "|_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|           ".magenta + "|".yellow)
       console.log("|   ".yellow + "                          |___/                   ".magenta + "|".yellow)
-      console.log("'-----------------------------------------------------'".yellow)
+      console.log('|                                                     |'.yellow)
+      console.log("'-----------------------------------------------------'\n".yellow)
       mainPrompt();
     }
 
