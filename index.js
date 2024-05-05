@@ -159,6 +159,7 @@ addNewEmployee = () => {
           if (err) throw err;
           console.log(data.rows)
           const managers = data.rows.map(({ id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: id }));
+          managers.push('None')
 
           inquirer.prompt([
             {
@@ -168,7 +169,10 @@ addNewEmployee = () => {
               choices: managers
             }
           ]).then(managerAns => {
-            const manager = managerAns.manager;
+            let manager = managerAns.manager;
+            if(manager === 'None'){
+              manager = null;
+            }
             params.push(manager);
 
             const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -186,6 +190,8 @@ addNewEmployee = () => {
     })
   })
 }
+
+
 
 // Welcome image function that displays after connection is made
 afterConnect = () => {
