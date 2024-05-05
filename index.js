@@ -111,6 +111,12 @@ showAllDepts = () => {
   })
 }
 
+// TODO: Displays employees by manager
+
+// TODO: Displays employees by department
+
+// TODO: Displays total utilized budget of department
+
 /* ---------- Functions to add items to tables ---------- */
 // Adds new employee
 addNewEmployee = () => {
@@ -287,8 +293,61 @@ addNewDept = () => {
   })
 }
 
-/* ---------- Updates items in tables ---------- */
+/* ---------- Functions to update items in tables ---------- */
+// Updates employee's role
+updateEmpRole = () => {
+  const empSql = `SELECT * FROM employee`;
+  pool.query(empSql, (err, data) => {
+    if (err) throw err;
+    const employees = data.rows.map(({id, first_name, last_name}) => ({name: first_name+' '+last_name, value: id}));
 
+    inquirer.prompt([
+      {
+        type: 'list',
+        message: `Which employee's role do you want to update?`,
+        name: 'emp',
+        choices: employees
+      }
+    ]).then((ans) => {
+      const params = [ans.emp];
+
+      const roleSql = `SELECT * FROM roles`;
+      pool.query(roleSql, (err, data) => {
+        if (err) throw err;
+        const roles = data.rows.map(({id, title}) => ({name: title, value: id}));
+
+        inquirer.prompt([
+          {
+            type: 'list',
+            message: `Which role do you want to assign the selected employee?`,
+            name: 'role',
+            choices: roles
+          }
+        ]).then(roleAns => {
+          const role = roleAns.role;
+          params.push(role);
+
+          const sql = `UPDATE employee SET role_id = $2 WHERE id = $1`;
+
+          pool.query(sql, params, (err, results) => {
+            if(err) throw err;
+            console.log(`\nUpdated employee's role.\n`.green);
+            mainPrompt();
+          })
+        })
+      })
+    })
+  })
+}
+
+// TODO: Updates employee's manager
+
+/* ---------- Functions to delete items from table ---------- */
+// TODO: Deletes employee
+
+// TODO: Deletes role
+
+// TODO: Deletes department
 
 // Welcome image function that displays after connection is made
 afterConnect = () => {
