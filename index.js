@@ -1,19 +1,7 @@
-const { pool } = require('./lib/pool');
+const pool = require('./lib/pool');
 const inquirer = require('inquirer');
 const colors = require('colors');
-const prompt = require('./lib/questions');
-
-
-const pool = new Pool(
-  {
-    //PostgreSQL username
-    user: 'rvbou',
-    //PostgreSQL password
-    password: 'redrum',
-    host: 'localhost',
-    database: 'employees_db'
-  },
-)
+const consTable = require('console.table');
 
 const mainPrompt = () => inquirer.prompt([
   {
