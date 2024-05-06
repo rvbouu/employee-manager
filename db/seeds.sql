@@ -1,3 +1,5 @@
+-- Starter data for employees_db --
+-- adds following values into the department table
 INSERT INTO department (name)
 VALUES
   ('Engineering'),
@@ -5,6 +7,7 @@ VALUES
   ('Legal'),
   ('Sales');
 
+-- adds following values into the roles table
 INSERT INTO roles (title, salary, department_id)
 VALUES
   ('Sales Lead', 100000, 4),
@@ -16,6 +19,7 @@ VALUES
   ('Legal Team Lead', 275000, 3),
   ('Lawyer', 170000, 3);
 
+-- adds following values into the employee table
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
   ('Brian', 'O''Conner', 7, null),
